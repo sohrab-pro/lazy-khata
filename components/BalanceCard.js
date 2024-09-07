@@ -1,20 +1,48 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useState } from "react";
 
 const BalanceCard = () => {
+	const [showBalance, setShowBalance] = useState(true);
+
+	function toggleBalance() {
+		setShowBalance(!showBalance);
+	}
+
 	return (
 		<View style={styles.container}>
-			<Text style={styles.hideBalanceText}>Hide Balance</Text>
+			{showBalance ? (
+				<TouchableOpacity onPress={toggleBalance}>
+					<Text style={styles.hideBalanceText}>Hide Balance</Text>
+				</TouchableOpacity>
+			) : (
+				""
+			)}
 			<View style={styles.balanceContainer}>
-				<View style={styles.balanceColumn}>
-					<Text style={styles.giveAmount}>Rs 0</Text>
-					<Text style={styles.giveLabel}>You will give</Text>
-				</View>
-				<View style={styles.separator} />
-				<View style={styles.balanceColumn}>
-					<Text style={styles.getAmount}>Rs 0</Text>
-					<Text style={styles.getLabel}>You will get</Text>
-				</View>
+				{showBalance ? (
+					<>
+						<View style={styles.balanceColumn}>
+							<Text style={styles.giveAmount}>Rs 0</Text>
+							<Text style={styles.giveLabel}>You will give</Text>
+						</View>
+						<View style={styles.separator} />
+						<View style={styles.balanceColumn}>
+							<Text style={styles.getAmount}>Rs 0</Text>
+							<Text style={styles.getLabel}>You will get</Text>
+						</View>
+					</>
+				) : (
+					<TouchableOpacity onPress={toggleBalance}>
+						<Text
+							style={{
+								color: "#FF4500",
+								marginLeft: 85,
+								paddingVertical: 10,
+							}}>
+							Show Balance
+						</Text>
+					</TouchableOpacity>
+				)}
 				<View style={styles.separator} />
 			</View>
 		</View>
@@ -43,21 +71,23 @@ const styles = StyleSheet.create({
 	},
 	giveAmount: {
 		color: "#00FF00", // Green for "You will give" amount
-		fontSize: 24,
+		fontSize: 20,
 		fontWeight: "bold",
+		paddingLeft: 10,
 	},
 	giveLabel: {
 		color: "#A9A9A9", // Gray for "You will give" label
-		fontSize: 14,
+		fontSize: 12,
+		paddingLeft: 10,
 	},
 	getAmount: {
 		color: "#FF0000", // Red for "You will get" amount
-		fontSize: 24,
+		fontSize: 20,
 		fontWeight: "bold",
 	},
 	getLabel: {
 		color: "#A9A9A9", // Gray for "You will get" label
-		fontSize: 14,
+		fontSize: 12,
 	},
 	separator: {
 		height: "100%",
