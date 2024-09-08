@@ -3,9 +3,11 @@ import {
 	View,
 	Text,
 	FlatList,
-	StyleSheet,
 	TouchableOpacity,
+	StyleSheet,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import BalanceCard from "./BalanceCard";
 
 const data = [
 	{
@@ -115,50 +117,61 @@ const data = [
 ];
 
 const CustomerList = () => {
+	const navigation = useNavigation(); // Access navigation
+
 	const renderItem = ({ item }) => (
-		<View style={styles.itemContainer}>
-			<View style={styles.customerInfo}>
-				<View style={styles.avatar}>
-					<Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
+		<TouchableOpacity
+			onPress={() =>
+				navigation.navigate("CustomerInfo", { customer: item })
+			} // Pass customer data
+		>
+			<View style={styles.itemContainer}>
+				<View style={styles.customerInfo}>
+					<View style={styles.avatar}>
+						<Text style={styles.avatarText}>
+							{item.name.charAt(0)}
+						</Text>
+					</View>
+					<View style={styles.details}>
+						<Text style={styles.name}>{item.name}</Text>
+						<Text
+							style={
+								styles.dateTime
+							}>{`${item.date} • ${item.time}`}</Text>
+					</View>
 				</View>
-				<View style={styles.details}>
-					<Text style={styles.name}>{item.name}</Text>
-					<Text
-						style={
-							styles.dateTime
-						}>{`${item.date} • ${item.time}`}</Text>
-				</View>
-			</View>
-			<View style={styles.amountContainer}>
-				<Text
-					style={
-						item.type === "send"
-							? styles.sendAmount
-							: styles.requestAmount
-					}>
-					Rs {item.amount}
-				</Text>
-				<TouchableOpacity
-					style={
-						item.type === "send"
-							? styles.sendButton
-							: styles.requestButton
-					}>
+				<View style={styles.amountContainer}>
 					<Text
 						style={
 							item.type === "send"
-								? styles.sendButtonText
-								: styles.requestButtonText
+								? styles.sendAmount
+								: styles.requestAmount
 						}>
-						{item.type === "send" ? "Send" : "Request"}
+						Rs {item.amount}
 					</Text>
-				</TouchableOpacity>
+					<TouchableOpacity
+						style={
+							item.type === "send"
+								? styles.sendButton
+								: styles.requestButton
+						}>
+						<Text
+							style={
+								item.type === "send"
+									? styles.sendButtonText
+									: styles.requestButtonText
+							}>
+							{item.type === "send" ? "Send" : "Request"}
+						</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
-		</View>
+		</TouchableOpacity>
 	);
 
 	return (
 		<View style={styles.container}>
+			<BalanceCard />
 			<FlatList
 				data={data}
 				renderItem={renderItem}
