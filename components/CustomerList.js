@@ -179,7 +179,14 @@ const CustomerList = () => {
 				keyExtractor={(item) => item.id}
 				contentContainerStyle={{ paddingBottom: 60 }}
 			/>
-			<TouchableOpacity style={styles.floatingButton}>
+			<TouchableOpacity
+				onPress={() =>
+					navigation.navigate("AddCustomer", {
+						customers,
+						setCustomers,
+					})
+				}
+				style={styles.floatingButton}>
 				<Text style={styles.floatingButtonText}>Add Customer</Text>
 			</TouchableOpacity>
 		</View>
