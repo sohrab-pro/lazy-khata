@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	View,
 	Text,
@@ -117,6 +117,7 @@ const data = [
 ];
 
 const CustomerList = () => {
+	const [customers, setCustomers] = useState(data);
 	const navigation = useNavigation(); // Access navigation
 
 	const renderItem = ({ item }) => (
@@ -173,7 +174,7 @@ const CustomerList = () => {
 		<View style={styles.container}>
 			<BalanceCard />
 			<FlatList
-				data={data}
+				data={customers}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.id}
 				contentContainerStyle={{ paddingBottom: 60 }}
