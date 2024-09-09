@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import BalanceCard from "./BalanceCard";
+import { getAllRows } from "./Database";
 
 const data = [
 	{
@@ -18,107 +19,35 @@ const data = [
 		amount: "7,000",
 		type: "send",
 	},
-	{
-		id: "2",
-		name: "Mehran Sheena",
-		date: "Tue, 03 Sep 24",
-		time: "02:52 PM",
-		amount: "2,000",
-		type: "request",
-	},
-	{
-		id: "3",
-		name: "Pedhawar",
-		date: "Tue, 27 Aug 24",
-		time: "06:57 PM",
-		amount: "2,800",
-		type: "request",
-	},
-	{
-		id: "4",
-		name: "Khalid",
-		date: "Mon, 26 Aug 24",
-		time: "11:39 AM",
-		amount: "41,062",
-		type: "send",
-	},
-	{
-		id: "5",
-		name: "ayaz",
-		date: "Fri, 23 Aug 24",
-		time: "05:46 PM",
-		amount: "15,871",
-		type: "request",
-	},
-	{
-		id: "6",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "7",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "8",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "9",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "10",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "11",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "12",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
-	{
-		id: "13",
-		name: "AMJAD",
-		date: "Wed, 21 Aug 24",
-		time: "07:57 PM",
-		amount: "19,183",
-		type: "request",
-	},
 ];
 
 const CustomerList = () => {
-	const [customers, setCustomers] = useState(data);
+	const [customers, setCustomers] = useState([]);
 	const navigation = useNavigation(); // Access navigation
+
+	useEffect(() => {
+		async function getRows() {
+			const allRows = await getAllRows();
+			let newRows = [];
+			for (const row of allRows) {
+				newRows.push({
+					id: row.id,
+					name: row.name,
+					date: "Tue, 03 Sep 24",
+					time: "06:53 PM",
+					amount: "7,000",
+					type: "send",
+				});
+			}
+			setCustomers(newRows);
+		}
+
+		getRows();
+
+		return () => {
+			// Clean up code (e.g., removing event listeners)
+		};
+	}, []);
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
@@ -181,10 +110,7 @@ const CustomerList = () => {
 			/>
 			<TouchableOpacity
 				onPress={() =>
-					navigation.navigate("AddCustomer", {
-						customers,
-						setCustomers,
-					})
+					navigation.navigate("AddCustomer", customers, setCustomers)
 				}
 				style={styles.floatingButton}>
 				<Text style={styles.floatingButtonText}>Add Customer</Text>

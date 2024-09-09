@@ -5,35 +5,29 @@ import {
 	TextInput,
 	TouchableOpacity,
 	StyleSheet,
+	Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { addRow } from "./Database";
 
-const AddCustomer = ({ route, navigation }) => {
-	const { customers, setCustomers } = route.params;
+const AddCustomer = ({ route }) => {
 	const [name, setName] = useState("");
 	const [mobileNumber, setMobileNumber] = useState("");
-	const handleContinue = () => {
+	const navigation = useNavigation();
+
+	const handleContinue = async () => {
 		if (!name) {
 			Alert.alert("Validation", "Name is required!");
 			return;
 		}
 
-		// Add new customer
-		const newCustomer = {
-			id: (customers.length + 1).toString(),
-			name,
-			date: new Date().toDateString(),
-			time: new Date().toLocaleTimeString([], {
-				hour: "2-digit",
-				minute: "2-digit",
-				hour12: true,
-			}),
-			amount: "0",
-			type: "request",
-		};
-
-		setCustomers([...customers, newCustomer]);
+		await addToDb(name, mobileNumber);
 		navigation.goBack();
 	};
+
+	async function addToDb(name, phone) {
+		await addRow(name, phone);
+	}
 
 	return (
 		<View style={styles.container}>
