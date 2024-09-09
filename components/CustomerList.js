@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -6,48 +6,35 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import BalanceCard from "./BalanceCard";
 import { getAllRows } from "./Database";
-
-const data = [
-	{
-		id: "1",
-		name: "Hilal",
-		date: "Tue, 03 Sep 24",
-		time: "06:53 PM",
-		amount: "7,000",
-		type: "send",
-	},
-];
 
 const CustomerList = () => {
 	const [customers, setCustomers] = useState([]);
 	const navigation = useNavigation(); // Access navigation
 
-	useEffect(() => {
-		async function getRows() {
-			const allRows = await getAllRows();
-			let newRows = [];
-			for (const row of allRows) {
-				newRows.push({
-					id: row.id,
-					name: row.name,
-					date: "Tue, 03 Sep 24",
-					time: "06:53 PM",
-					amount: "7,000",
-					type: "send",
-				});
-			}
-			setCustomers(newRows);
+	const fetchCustomers = async () => {
+		const allRows = await getAllRows();
+		let newRows = [];
+		for (const row of allRows) {
+			newRows.push({
+				id: row.id,
+				name: row.name,
+				date: "Tue, 03 Sep 24",
+				time: "06:53 PM",
+				amount: "7,000",
+				type: "send",
+			});
 		}
+		setCustomers(newRows);
+	};
 
-		getRows();
-
-		return () => {
-			// Clean up code (e.g., removing event listeners)
-		};
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			fetchCustomers();
+		}, [])
+	);
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
