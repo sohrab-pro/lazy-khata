@@ -1,9 +1,19 @@
 import * as SQLite from "expo-sqlite";
 
-export async function addRow(name, phone) {
+export async function addCustomerRow(name, phone) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
 	await db.runAsync(
 		"INSERT INTO customer (name, phone) VALUES (?, ?)",
+		name,
+		phone
+	);
+	return getAllRows();
+}
+
+export async function addTransactionsRow(name, phone) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	await db.runAsync(
+		"INSERT INTO transactions (name, phone) VALUES (?, ?)",
 		name,
 		phone
 	);

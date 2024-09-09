@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	View,
 	Text,
@@ -20,35 +20,15 @@ const transactions = [
 		balance: "Rs39,062",
 		type: "gave",
 	},
-	{
-		id: "2",
-		date: "Mon, 26 Aug 24 • 11:38 AM",
-		title: "Sumera",
-		amount: "-4,000",
-		balance: "Rs41,062",
-		type: "gave",
-	},
-	{
-		id: "3",
-		date: "Thu, 22 Aug 24 • 11:38 AM",
-		title: "From pcn received 20k",
-		amount: "+10,000",
-		balance: "Rs45,062",
-		type: "got",
-	},
-	{
-		id: "4",
-		date: "Sat, 17 Aug 24 • 07:24 PM",
-		title: "From zam zam hisab",
-		amount: "+8,169",
-		balance: "Rs35,062",
-		type: "got",
-	},
 ];
 
 const CustomerInfo = ({ route }) => {
 	const navigation = useNavigation();
 	const { customer } = route.params;
+
+	const [transaction, setTransaction] = useState({});
+
+	async function addTransaction() {}
 
 	async function deleteTheRow() {
 		await deleteRow(customer.id, "customer");
@@ -102,7 +82,9 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Bottom Section */}
 			<View style={styles.bottomSection}>
-				<TouchableOpacity style={styles.gaveButton}>
+				<TouchableOpacity
+					onPress={addTransaction}
+					style={styles.gaveButton}>
 					<Text style={styles.bottomButtonText}>YOU GAVE Rs</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.gotButton}>

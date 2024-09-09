@@ -32,16 +32,29 @@ export default function App() {
 				BEGIN
 					UPDATE customer SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 				END;
+
+				CREATE TABLE IF NOT EXISTS transactions (
+					id INTEGER PRIMARY KEY NOT NULL,
+					amount REAL NOT NULL,
+					comment TEXT,
+					customer_id INTEGER,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					FOREIGN KEY(customer_id) REFERENCES customer(id)
+				);
+
+				CREATE TRIGGER IF NOT EXISTS update_transactions_updated_at
+				AFTER UPDATE ON transactions
+				FOR EACH ROW
+				BEGIN
+					UPDATE transactions SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+				END;
 			`);
 
-			// await db.execAsync(
-			// 	`
-			// 	UPDATE customer SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL;
-			// 	UPDATE customer SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL;
-			// 	`
-			// );
-
 			const allRows = await db.getAllAsync("SELECT * FROM customer");
+			console.log("Customer Table", allRows);
+			const allRows2 = await db.getAllAsync("SELECT * FROM transactions");
+			console.log("Transactions Table:", allRows2);
 			for (const row of allRows) {
 				console.log(row);
 			}

@@ -8,7 +8,7 @@ import {
 	Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { addRow } from "./Database";
+import { addCustomerRow } from "./Database";
 
 const AddCustomer = ({ route }) => {
 	const [name, setName] = useState("");
@@ -26,7 +26,7 @@ const AddCustomer = ({ route }) => {
 	};
 
 	async function addToDb(name, phone) {
-		await addRow(name, phone);
+		await addCustomerRow(name, phone);
 	}
 
 	return (
