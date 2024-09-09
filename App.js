@@ -19,12 +19,11 @@ export default function App() {
 				PRAGMA journal_mode = WAL;
 				CREATE TABLE IF NOT EXISTS customer (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, phone INTEGER);
 				`);
-			// INSERT  INTO customer (name, phone) VALUES ('Sohrab', 03426006612);
 
-			const allRows = await db.getAllAsync("SELECT * FROM customer");
-			for (const row of allRows) {
-				console.log(row);
-			}
+			// const allRows = await db.getAllAsync("SELECT * FROM customer");
+			// for (const row of allRows) {
+			// 	console.log(row);
+			// }
 		}
 		setup();
 	}, []);
