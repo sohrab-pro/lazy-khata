@@ -15,15 +15,36 @@ export default function App() {
 	useEffect(() => {
 		async function setup() {
 			const db = await SQLite.openDatabaseAsync("lazydb");
-			db.execAsync(`
+			await db.execAsync(`
 				PRAGMA journal_mode = WAL;
-				CREATE TABLE IF NOT EXISTS customer (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, phone INTEGER);
-				`);
+				
+				CREATE TABLE IF NOT EXISTS customer (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					name TEXT NOT NULL, 
+					phone INTEGER,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+				
+				CREATE TRIGGER IF NOT EXISTS update_customer_updated_at
+				AFTER UPDATE ON customer
+				FOR EACH ROW
+				BEGIN
+					UPDATE customer SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+				END;
+			`);
 
-			// const allRows = await db.getAllAsync("SELECT * FROM customer");
-			// for (const row of allRows) {
-			// 	console.log(row);
-			// }
+			// await db.execAsync(
+			// 	`
+			// 	UPDATE customer SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL;
+			// 	UPDATE customer SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL;
+			// 	`
+			// );
+
+			const allRows = await db.getAllAsync("SELECT * FROM customer");
+			for (const row of allRows) {
+				console.log(row);
+			}
 		}
 		setup();
 	}, []);
@@ -49,6 +70,7 @@ export default function App() {
 					<Stack.Screen
 						name="CustomerInfo"
 						component={CustomerInfo}
+						options={{ headerShown: false }}
 					/>
 				</Stack.Navigator>
 			</NavigationContainer>

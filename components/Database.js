@@ -10,7 +10,8 @@ export async function addRow(name, phone) {
 	return getAllRows();
 }
 
-export async function updateRow(id, value, intValue) {
+export async function updateRow(id, name, phone) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
 	await db.runAsync(
 		"UPDATE contact SET name = ?, phone = ? WHERE id = ?",
 		value,
@@ -20,8 +21,9 @@ export async function updateRow(id, value, intValue) {
 	return getAllRows();
 }
 
-export async function deleteRow(id) {
-	await db.runAsync("DELETE FROM contact WHERE id = ?", id);
+export async function deleteRow(id, table) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	await db.runAsync(`DELETE FROM ${table} WHERE id = ?`, id);
 	return getAllRows();
 }
 
