@@ -17,3 +17,11 @@ This is a **React Native** mobile application built using **Expo**. The app is d
     ```bash
     git clone https://github.com/sohrab-pro/lazy-khata.git
     ```
+2. Install Dependencies:
+    ```bash
+    npm install
+    ```
+3. Start the app:
+    ```bash
+    npx expo start
+    ```
