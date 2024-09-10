@@ -9,6 +9,7 @@ import {
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import BalanceCard from "./BalanceCard";
 import { getAllCustomerRows, getTotalCreditDebitCustomer } from "./Database";
+import moment from "moment-timezone";
 
 const CustomerList = () => {
 	const [customers, setCustomers] = useState([]);
@@ -28,11 +29,17 @@ const CustomerList = () => {
 			} else {
 				type = "send";
 			}
+			const karachiTime = moment.utc(row.created_at).tz("Asia/Karachi");
+
+			const formattedDate = karachiTime.format("YYYY-MM-DD");
+			const formattedTime = karachiTime.format("h:mm A");
+			const time = formattedTime;
+			const date = formattedDate;
 			newRows.push({
 				id: row.id,
 				name: row.name,
-				date: "Tue, 03 Sep 24",
-				time: "06:53 PM",
+				date: date,
+				time: time,
 				amount: Math.abs(balance)?.toLocaleString(),
 				type: type,
 			});

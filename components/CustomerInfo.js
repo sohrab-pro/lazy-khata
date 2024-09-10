@@ -8,7 +8,6 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import moment from "moment-timezone";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";

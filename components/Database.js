@@ -82,7 +82,8 @@ export async function getTotalCreditDebitCustomer(id) {
 		`
     SELECT 
       SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END) AS total_credit,
-      SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END) AS total_debit
+      SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END) AS total_debit,
+      MAX(updated_at) AS last_updated
     FROM transactions
     WHERE customer_id = ?
     `,
