@@ -92,24 +92,32 @@ const CustomerInfo = ({ route }) => {
 	const renderTransaction = ({ item }) => (
 		<TouchableOpacity
 			onPress={() => navigation.navigate("TransactionInfo", { item })}>
-			<View style={styles.transactionRow}>
-				<Text style={styles.transactionDate}>{item.created_at}</Text>
-				{item.comment ? (
-					<Text style={styles.transactionTitle}>{item.comment}</Text>
-				) : (
-					""
-				)}
+			<View style={styles.row}>
+				<View style={styles.cellMain}>
+					<Text style={{ fontSize: 11, fontWeight: "bold" }}>
+						{item.created_at}
+					</Text>
+					{item.comment && (
+						<Text style={{ fontSize: 14 }}>{item.comment}</Text>
+					)}
+				</View>
 				<Text
 					style={[
-						styles.transactionAmount,
-						item.transaction_type === "debit"
-							? styles.redText
-							: styles.greenText,
+						styles.debitCell,
+						{
+							fontSize: 12,
+							fontWeight: "bold",
+							color: "red",
+						},
 					]}>
-					Rs. {item.amount}
+					{item.transaction_type == "debit" ? item.amount : ""}
 				</Text>
-				<Text style={styles.transactionBalance}>
-					Bal. {item.balance}
+				<Text
+					style={[
+						styles.cell,
+						{ fontSize: 12, fontWeight: "bold", color: "green" },
+					]}>
+					{item.transaction_type == "credit" ? item.amount : ""}
 				</Text>
 			</View>
 		</TouchableOpacity>
@@ -133,47 +141,49 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Balance and Send Button */}
 			{transactions.length > 0 ? (
-				<>
-					<View style={styles.balanceContainer}>
-						<Text style={balanceStyle}>
-							Rs {Math.abs(currentBalance)}
-						</Text>
-						<Text
-							style={{
-								color:
-									amountLabel === "You Will Get"
-										? "red"
-										: "green",
-							}}>
-							{amountLabel}
-						</Text>
-						{amountLabel == "You Will Get" ? (
-							<TouchableOpacity style={styles.sendButton}>
-								<Text style={styles.sendButtonText}>
-									Message
-								</Text>
-							</TouchableOpacity>
-						) : (
-							<TouchableOpacity style={styles.receiveButton}>
-								<Text style={styles.receiveButtonText}>
-									Message
-								</Text>
-							</TouchableOpacity>
-						)}
-					</View>
+				<View style={styles.balanceContainer}>
+					<Text style={balanceStyle}>
+						Rs {Math.abs(currentBalance)}
+					</Text>
+					<Text
+						style={{
+							color:
+								amountLabel === "You Will Get"
+									? "red"
+									: "green",
+						}}>
+						{amountLabel}
+					</Text>
+					{amountLabel == "You Will Get" ? (
+						<TouchableOpacity style={styles.sendButton}>
+							<Text style={styles.sendButtonText}>Message</Text>
+						</TouchableOpacity>
+					) : (
+						<TouchableOpacity style={styles.receiveButton}>
+							<Text style={styles.receiveButtonText}>
+								Message
+							</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+			) : (
+				""
+			)}
 
-					{/* <View style={styles.actionButtons}>
+			{/* <View style={styles.actionButtons}>
 						<Button title="Report" onPress={() => {}} />
 						<Button title="Set Date" onPress={() => {}} />
 						<Button title="Reminder" onPress={() => {}} />
 						<Button title="SMS" onPress={() => {}} />
 					</View> */}
-				</>
-			) : (
-				""
-			)}
 
 			{/* Transaction List */}
+			<View style={styles.row}>
+				{/* Updated headers */}
+				<Text style={styles.cellMain}>Entries</Text>
+				<Text style={[styles.cell, { color: "red" }]}>You Gave</Text>
+				<Text style={[styles.cell, { color: "green" }]}>You Got</Text>
+			</View>
 			<FlatList
 				data={transactions}
 				keyExtractor={(item) => item.id.toString()}
@@ -199,6 +209,30 @@ const CustomerInfo = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	row: {
+		flexDirection: "row",
+		borderBottomWidth: 1,
+		borderBottomColor: "#ccc",
+		padding: 10,
+		backgroundColor: "#F5F5F5",
+	},
+	cell: {
+		flex: 1,
+		textAlign: "center",
+	},
+	debitCell: {
+		flex: 1,
+		textAlign: "center",
+		// backgroundColor: "gray",
+	},
+	cellMain: {
+		flex: 2,
+		textAlign: "left",
+	},
+	header: {
+		fontWeight: "bold",
+		backgroundColor: "#f0f0f0",
+	},
 	container: {
 		flex: 1,
 		backgroundColor: "#fff",
