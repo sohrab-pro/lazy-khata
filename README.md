@@ -1,7 +1,6 @@
-Here's a sample README for your React Native Expo mobile app repository:
 Credit/Debit Entry App
 Overview
-A mobile app for managing credit and debit entries for customers. Built using React Native and Expo.
+A mobile app for managing credit and debit entries for customers. Built using React Native and Expo and sqlite3 database.
 Features
 Add and manage customers
 Record debit and credit entries for each customer
