@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { deleteRow, getCustomer } from "./Database";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const TransactionInfo = () => {
 	const navigation = useNavigation();
@@ -61,7 +62,9 @@ const TransactionInfo = () => {
 					{message}
 				</Text>
 				<Text style={styles.customerName}>{transactionData.name}</Text>
-				<Text style={styles.customerType}>Customer</Text>
+				<TouchableOpacity onPress={deleteTransaction}>
+					<MaterialIcons name="delete" size={24} color="red" />
+				</TouchableOpacity>
 			</View>
 			<TextInput
 				placeholder="Amount"
