@@ -8,6 +8,8 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import moment from "moment-timezone";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { deleteRow, filterTransactionsRows } from "./Database";
@@ -104,7 +106,7 @@ const CustomerInfo = ({ route }) => {
 							? styles.redText
 							: styles.greenText,
 					]}>
-					{item.amount}
+					Rs. {item.amount}
 				</Text>
 				<Text style={styles.transactionBalance}>
 					Bal. {item.balance}
@@ -117,6 +119,14 @@ const CustomerInfo = ({ route }) => {
 		<View style={styles.container}>
 			{/* Header Section */}
 			<View style={styles.header}>
+				<TouchableOpacity onPress={() => navigation.goBack()}>
+					<AntDesign
+						name="arrowleft"
+						size={26}
+						fontWeight="bold"
+						color="black"
+					/>
+				</TouchableOpacity>
 				<Text style={styles.customerName}>{customer.name}</Text>
 				<Text style={styles.customerType}>Customer</Text>
 			</View>
@@ -125,7 +135,9 @@ const CustomerInfo = ({ route }) => {
 			{transactions.length > 0 ? (
 				<>
 					<View style={styles.balanceContainer}>
-						<Text style={balanceStyle}>Rs {currentBalance}</Text>
+						<Text style={balanceStyle}>
+							Rs {Math.abs(currentBalance)}
+						</Text>
 						<Text
 							style={{
 								color:
@@ -150,12 +162,12 @@ const CustomerInfo = ({ route }) => {
 						)}
 					</View>
 
-					<View style={styles.actionButtons}>
+					{/* <View style={styles.actionButtons}>
 						<Button title="Report" onPress={() => {}} />
 						<Button title="Set Date" onPress={() => {}} />
 						<Button title="Reminder" onPress={() => {}} />
 						<Button title="SMS" onPress={() => {}} />
-					</View>
+					</View> */}
 				</>
 			) : (
 				""
@@ -163,9 +175,10 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Transaction List */}
 			<FlatList
-				data={transactions} // Use dynamic transaction data
+				data={transactions}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderTransaction}
+				showsVerticalScrollIndicator={false}
 			/>
 
 			{/* Bottom Section */}
@@ -255,7 +268,7 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 	},
 	transactionTitle: {
-		fontSize: 16,
+		fontSize: 15,
 	},
 	transactionDate: {
 		fontSize: 12,
