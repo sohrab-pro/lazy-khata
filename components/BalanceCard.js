@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { getTotalCreditDebit } from "./Database";
 
 const BalanceCard = () => {
 	const [showBalance, setShowBalance] = useState(true);
+	const [willGive, setWillGive] = useState(0);
+	const [willGet, setWillGet] = useState(0);
 
 	function toggleBalance() {
 		setShowBalance(!showBalance);
 	}
+
+	useFocusEffect(
+		useCallback(() => {
+			async function getAmounts() {
+				const amounts = await getTotalCreditDebit();
+				setWillGet(amounts.total_debit?.toLocaleString());
+				setWillGive(amounts.total_credit?.toLocaleString());
+			}
+			getAmounts();
+		})
+	);
 
 	return (
 		<View style={styles.container}>
@@ -22,12 +37,12 @@ const BalanceCard = () => {
 				{showBalance ? (
 					<>
 						<View style={styles.balanceColumn}>
-							<Text style={styles.giveAmount}>Rs 0</Text>
+							<Text style={styles.giveAmount}>Rs {willGive}</Text>
 							<Text style={styles.giveLabel}>You will give</Text>
 						</View>
 						<View style={styles.separator} />
 						<View style={styles.balanceColumn}>
-							<Text style={styles.getAmount}>Rs 0</Text>
+							<Text style={styles.getAmount}>Rs {willGet}</Text>
 							<Text style={styles.getLabel}>You will get</Text>
 						</View>
 					</>

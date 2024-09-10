@@ -63,3 +63,31 @@ export async function filterTransactionsRows(id) {
 	);
 	return allRows;
 }
+
+export async function getTotalCreditDebit() {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const results = await db.getAllAsync(`
+    SELECT 
+        SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END) AS total_credit,
+        SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END) AS total_debit
+    FROM transactions;
+    `);
+
+	return results[0];
+}
+
+export async function getTotalCreditDebitCustomer(id) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const results = await db.getAllAsync(
+		`
+    SELECT 
+      SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END) AS total_credit,
+      SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END) AS total_debit
+    FROM transactions
+    WHERE customer_id = ?
+    `,
+		[id]
+	);
+
+	return results[0];
+}

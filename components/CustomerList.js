@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import BalanceCard from "./BalanceCard";
-import { getAllCustomerRows } from "./Database";
+import { getAllCustomerRows, getTotalCreditDebitCustomer } from "./Database";
 
 const CustomerList = () => {
 	const [customers, setCustomers] = useState([]);
@@ -18,13 +18,23 @@ const CustomerList = () => {
 		const allRows = await getAllCustomerRows();
 		let newRows = [];
 		for (const row of allRows) {
+			const amounts = await getTotalCreditDebitCustomer(row.id);
+			let totalCredit = amounts.total_credit;
+			let totalDebit = amounts.total_debit;
+			let balance = totalCredit - totalDebit;
+			let type = "";
+			if (balance < 0) {
+				type = "recieve";
+			} else {
+				type = "send";
+			}
 			newRows.push({
 				id: row.id,
 				name: row.name,
 				date: "Tue, 03 Sep 24",
 				time: "06:53 PM",
-				amount: "7,000",
-				type: "send",
+				amount: Math.abs(balance)?.toLocaleString(),
+				type: type,
 			});
 		}
 		setCustomers(newRows);
@@ -40,8 +50,7 @@ const CustomerList = () => {
 		<TouchableOpacity
 			onPress={() =>
 				navigation.navigate("CustomerInfo", { customer: item })
-			} // Pass customer data
-		>
+			}>
 			<View style={styles.itemContainer}>
 				<View style={styles.customerInfo}>
 					<View style={styles.avatar}>
@@ -159,7 +168,7 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 	requestAmount: {
-		color: "#FF0000", // Red for request amount
+		color: "#FF4500", // Red for request amount
 		fontSize: 16,
 		fontWeight: "bold",
 	},

@@ -46,7 +46,7 @@ const CustomerInfo = ({ route }) => {
 					const formattedDate = karachiTime.format("YYYY-MM-DD");
 					const formattedTime = karachiTime.format("h:mm A");
 
-					row.created_at = `${formattedDate} ・ ${formattedTime}`;
+					row.created_at = `${formattedDate} • ${formattedTime}`;
 					return row;
 				});
 				setTransactions(formattedRows);
