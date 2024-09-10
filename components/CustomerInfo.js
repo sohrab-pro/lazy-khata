@@ -26,9 +26,18 @@ const CustomerInfo = ({ route }) => {
 	const navigation = useNavigation();
 	const { customer } = route.params;
 
-	const [transaction, setTransaction] = useState({});
+	const [transaction, setTransaction] = useState([]);
 
-	async function addTransaction() {}
+	async function addTransaction(type) {
+		let customerInfo = {
+			id: customer.id,
+			name: customer.name,
+			transaction_type: type,
+		};
+		navigation.navigate("AddTransaction", {
+			customerInfo,
+		});
+	}
 
 	async function deleteTheRow() {
 		await deleteRow(customer.id, "customer");
@@ -83,11 +92,13 @@ const CustomerInfo = ({ route }) => {
 			{/* Bottom Section */}
 			<View style={styles.bottomSection}>
 				<TouchableOpacity
-					onPress={addTransaction}
+					onPress={() => addTransaction("debit")}
 					style={styles.gaveButton}>
 					<Text style={styles.bottomButtonText}>YOU GAVE Rs</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.gotButton}>
+				<TouchableOpacity
+					onPress={() => addTransaction("credit")}
+					style={styles.gotButton}>
 					<Text style={styles.bottomButtonText}>YOU GOT Rs</Text>
 				</TouchableOpacity>
 			</View>

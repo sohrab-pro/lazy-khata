@@ -10,12 +10,19 @@ export async function addCustomerRow(name, phone) {
 	return getAllRows();
 }
 
-export async function addTransactionsRow(name, phone) {
+export async function addTransactionsRow(
+	amount,
+	comment,
+	customer_id,
+	transaction_type
+) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
 	await db.runAsync(
-		"INSERT INTO transactions (name, phone) VALUES (?, ?)",
-		name,
-		phone
+		"INSERT INTO transactions (amount, comment, customer_id, transaction_type) VALUES (?, ?, ?, ?)",
+		amount,
+		comment,
+		customer_id,
+		transaction_type
 	);
 	return getAllRows();
 }

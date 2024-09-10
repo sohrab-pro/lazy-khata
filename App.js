@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CustomerInfo from "./components/CustomerInfo";
 import CustomerList from "./components/CustomerList";
 import AddCustomer from "./components/AddCustomer";
+import AddTransaction from "./components/AddTransaction";
 import { useEffect } from "react";
 import * as SQLite from "expo-sqlite";
 import { updateRow } from "./components/Database";
@@ -37,6 +38,7 @@ export default function App() {
 					id INTEGER PRIMARY KEY NOT NULL,
 					amount REAL NOT NULL,
 					comment TEXT,
+					transaction_type TEXT,
 					customer_id INTEGER,
 					created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
 					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -51,13 +53,9 @@ export default function App() {
 				END;
 			`);
 
-			const allRows = await db.getAllAsync("SELECT * FROM customer");
-			console.log("Customer Table", allRows);
-			const allRows2 = await db.getAllAsync("SELECT * FROM transactions");
-			console.log("Transactions Table:", allRows2);
-			for (const row of allRows) {
-				console.log(row);
-			}
+			const transactions = await db.getAllAsync(
+				"SELECT * FROM transactions"
+			);
 		}
 		setup();
 	}, []);
@@ -83,6 +81,11 @@ export default function App() {
 					<Stack.Screen
 						name="CustomerInfo"
 						component={CustomerInfo}
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name="AddTransaction"
+						component={AddTransaction}
 						options={{ headerShown: false }}
 					/>
 				</Stack.Navigator>
