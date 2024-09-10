@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	View,
 	Text,
 	StyleSheet,
-	Button,
 	FlatList,
 	TouchableOpacity,
 } from "react-native";
@@ -11,7 +10,7 @@ import moment from "moment-timezone";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { deleteRow, filterTransactionsRows } from "./Database";
+import { filterTransactionsRows } from "./Database";
 
 const CustomerInfo = ({ route }) => {
 	const navigation = useNavigation();
@@ -21,7 +20,7 @@ const CustomerInfo = ({ route }) => {
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [amountLabel, setAmountLabel] = useState("");
 	const [balanceStyle, setBalanceStyle] = useState({
-		fontSize: 28,
+		fontSize: 24,
 		fontWeight: "bold",
 	});
 
@@ -83,17 +82,12 @@ const CustomerInfo = ({ route }) => {
 		});
 	}
 
-	async function deleteTheRow() {
-		await deleteRow(customer.id, "customer");
-		navigation.goBack();
-	}
-
 	const renderTransaction = ({ item }) => (
 		<TouchableOpacity
 			onPress={() => navigation.navigate("TransactionInfo", { item })}>
 			<View style={styles.row}>
 				<View style={styles.cellMain}>
-					<Text style={{ fontSize: 11, fontWeight: "bold" }}>
+					<Text style={{ fontSize: 12, fontWeight: "bold" }}>
 						{item.created_at}
 					</Text>
 					{item.comment && (
@@ -104,19 +98,23 @@ const CustomerInfo = ({ route }) => {
 					style={[
 						styles.debitCell,
 						{
-							fontSize: 12,
+							fontSize: 14,
 							fontWeight: "bold",
 							color: "red",
 						},
 					]}>
-					{item.transaction_type == "debit" ? item.amount : ""}
+					{item.transaction_type == "debit"
+						? item.amount?.toLocaleString()
+						: ""}
 				</Text>
 				<Text
 					style={[
 						styles.cell,
-						{ fontSize: 12, fontWeight: "bold", color: "green" },
+						{ fontSize: 14, fontWeight: "bold", color: "green" },
 					]}>
-					{item.transaction_type == "credit" ? item.amount : ""}
+					{item.transaction_type == "credit"
+						? item.amount?.toLocaleString()
+						: ""}
 				</Text>
 			</View>
 		</TouchableOpacity>
@@ -143,7 +141,7 @@ const CustomerInfo = ({ route }) => {
 			{transactions.length > 0 ? (
 				<View style={styles.balanceContainer}>
 					<Text style={balanceStyle}>
-						Rs {Math.abs(currentBalance)}
+						Rs {Math.abs(currentBalance)?.toLocaleString()}
 					</Text>
 					<Text
 						style={{
@@ -154,7 +152,7 @@ const CustomerInfo = ({ route }) => {
 						}}>
 						{amountLabel}
 					</Text>
-					{amountLabel == "You Will Get" ? (
+					{/* {amountLabel == "You Will Get" ? (
 						<TouchableOpacity style={styles.sendButton}>
 							<Text style={styles.sendButtonText}>Message</Text>
 						</TouchableOpacity>
@@ -164,7 +162,7 @@ const CustomerInfo = ({ route }) => {
 								Message
 							</Text>
 						</TouchableOpacity>
-					)}
+					)} */}
 				</View>
 			) : (
 				""
@@ -228,10 +226,6 @@ const styles = StyleSheet.create({
 	cellMain: {
 		flex: 2,
 		textAlign: "left",
-	},
-	header: {
-		fontWeight: "bold",
-		backgroundColor: "#f0f0f0",
 	},
 	container: {
 		flex: 1,

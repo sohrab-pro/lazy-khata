@@ -17,6 +17,15 @@ export async function addCustomerRow(name, phone) {
 	return lastCustomer;
 }
 
+export async function getCustomer(id) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const customer = await db.getFirstAsync(
+		"SELECT * FROM customer WHERE id = ?",
+		id
+	);
+	return customer;
+}
+
 export async function addTransactionsRow(
 	amount,
 	comment,
