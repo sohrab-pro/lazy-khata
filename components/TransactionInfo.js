@@ -1,42 +1,41 @@
 import React, { useEffect, useState } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	Button,
-	FlatList,
-	TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { deleteRow, getCustomer } from "./Database";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
-let color = "";
-let message = "";
-let customerName = "";
 
 const TransactionInfo = () => {
 	const navigation = useNavigation();
 	const route = useRoute();
 
+	const [color, setColor] = useState("");
+	const [message, setMessage] = useState("");
+	const [customerName, setCustomerName] = useState("");
+
 	const transactionData = route.params.item;
 
 	async function getCustomerData(id) {
 		const customer = await getCustomer(id);
-		customerName = customer.name;
+		setCustomerName(customer.name);
 		return customer;
 	}
 
 	useEffect(() => {
 		getCustomerData(transactionData.customer_id);
-	}, [transactionData.id]);
+	}, [transactionData.customer_id]);
 
-	if (transactionData.transaction_type == "credit") {
-		color = "green";
-		message = `You Got Rs ${transactionData.amount.toLocaleString()} from ${customerName}`;
-	} else {
-		color = "#f95a57";
-		message = `You Gave Rs ${transactionData.amount.toLocaleString()} to ${customerName}`;
-	}
+	useEffect(() => {
+		if (transactionData.transaction_type === "credit") {
+			setColor("green");
+			setMessage(
+				`You Got Rs ${transactionData.amount.toLocaleString()} from ${customerName}`
+			);
+		} else {
+			setColor("#f95a57");
+			setMessage(
+				`You Gave Rs ${transactionData.amount.toLocaleString()} to ${customerName}`
+			);
+		}
+	}, [transactionData, customerName]);
 
 	async function deleteTransaction() {
 		await deleteRow(transactionData.id, "transactions");
