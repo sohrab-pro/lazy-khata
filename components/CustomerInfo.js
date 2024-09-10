@@ -126,7 +126,8 @@ const CustomerInfo = ({ route }) => {
 		<View style={styles.container}>
 			{/* Header Section */}
 			<View style={styles.header}>
-				<TouchableOpacity onPress={() => navigation.goBack()}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("Customers")}>
 					<AntDesign
 						name="arrowleft"
 						size={26}

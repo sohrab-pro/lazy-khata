@@ -2,12 +2,19 @@ import * as SQLite from "expo-sqlite";
 
 export async function addCustomerRow(name, phone) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
-	await db.runAsync(
+	const result = await db.runAsync(
 		"INSERT INTO customer (name, phone) VALUES (?, ?)",
 		name,
 		phone
 	);
-	return getAllCustomerRows();
+
+	const customerID = result.lastInsertRowId;
+	const lastCustomer = await db.getFirstAsync(
+		"SELECT * FROM customer WHERE id = ?",
+		customerID
+	);
+
+	return lastCustomer;
 }
 
 export async function addTransactionsRow(
@@ -17,14 +24,20 @@ export async function addTransactionsRow(
 	transaction_type
 ) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
-	await db.runAsync(
+	const result = await db.runAsync(
 		"INSERT INTO transactions (amount, comment, customer_id, transaction_type) VALUES (?, ?, ?, ?)",
 		amount,
 		comment,
 		customer_id,
 		transaction_type
 	);
-	return getAllCustomerRows();
+
+	const transactionID = result.lastInsertRowId;
+	const lastTransaction = await db.getFirstAsync(
+		"SELECT * FROM transactions WHERE id = ?",
+		transactionID
+	);
+	return lastTransaction;
 }
 
 export async function updateRow(id, name, phone) {
@@ -46,7 +59,13 @@ export async function deleteRow(id, table) {
 
 export async function getAllCustomerRows() {
 	const db = await SQLite.openDatabaseAsync("lazydb");
-	const allRows = await db.getAllAsync("SELECT * FROM customer");
+	const allRows = await db.getAllAsync(`
+    SELECT c.*, MAX(t.updated_at) AS last_transaction_date
+    FROM customer c
+    LEFT JOIN transactions t ON c.id = t.customer_id
+    GROUP BY c.id
+    ORDER BY last_transaction_date DESC
+  `);
 	return allRows;
 }
 

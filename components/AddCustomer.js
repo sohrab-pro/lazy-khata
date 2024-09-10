@@ -21,13 +21,9 @@ const AddCustomer = ({ route }) => {
 			return;
 		}
 
-		await addToDb(name, mobileNumber);
-		navigation.goBack();
+		const customer = await addCustomerRow(name, mobileNumber);
+		navigation.navigate("CustomerInfo", { customer: customer });
 	};
-
-	async function addToDb(name, phone) {
-		await addCustomerRow(name, phone);
-	}
 
 	return (
 		<View style={styles.container}>
