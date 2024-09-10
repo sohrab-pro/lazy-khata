@@ -7,6 +7,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 } from "react-native";
+import moment from "moment-timezone";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { deleteRow, filterTransactionsRows } from "./Database";
@@ -22,28 +23,14 @@ const CustomerInfo = ({ route }) => {
 			async function getData() {
 				const rows = await filterTransactionsRows(customer.id);
 				const formattedRows = rows.map((row) => {
-					// Parse the created_at timestamp
-					const date = new Date(row.created_at);
+					const karachiTime = moment
+						.utc(row.created_at)
+						.tz("Asia/Karachi");
 
-					// Format the date and time for Asia/Karachi timezone
-					const options = {
-						year: "numeric",
-						month: "2-digit",
-						day: "2-digit",
-						hour: "2-digit",
-						minute: "2-digit",
-						hour12: true, // 12-hour format with AM/PM
-						timeZone: "Asia/Karachi",
-					};
-					const formattedDate = new Intl.DateTimeFormat(
-						"en-US",
-						options
-					).format(date);
+					const formattedDate = karachiTime.format("YYYY-MM-DD");
+					const formattedTime = karachiTime.format("h:mm A");
 
-					// Format it into desired output "2024-09-10 - time /AM/PM"
-					const [datePart, timePart] = formattedDate.split(", ");
-					row.created_at = `${datePart} - ${timePart}`;
-
+					row.created_at = `${formattedDate} ・ ${formattedTime}`;
 					return row;
 				});
 				setTransaction(formattedRows);
@@ -73,7 +60,11 @@ const CustomerInfo = ({ route }) => {
 	const renderTransaction = ({ item }) => (
 		<View style={styles.transactionRow}>
 			<Text style={styles.transactionDate}>{item.created_at}</Text>
-			<Text style={styles.transactionTitle}>{item.comment}</Text>
+			{item.comment ? (
+				<Text style={styles.transactionTitle}>{item.comment}</Text>
+			) : (
+				""
+			)}
 			<Text
 				style={[
 					styles.transactionAmount,
