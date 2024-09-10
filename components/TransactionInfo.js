@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	TextInput,
+	TouchableOpacity,
+} from "react-native";
 import { deleteRow, getCustomer } from "./Database";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 const TransactionInfo = () => {
 	const navigation = useNavigation();
 	const route = useRoute();
+	const transactionData = route.params.item;
 
 	const [color, setColor] = useState("");
 	const [message, setMessage] = useState("");
 	const [customerName, setCustomerName] = useState("");
-
-	const transactionData = route.params.item;
+	const [inputAmount, setInputAmount] = useState(
+		transactionData.amount.toString()
+	);
+	const [inputComment, setInputComment] = useState(transactionData.comment);
 
 	async function getCustomerData(id) {
 		const customer = await getCustomer(id);
@@ -42,6 +51,8 @@ const TransactionInfo = () => {
 		navigation.goBack();
 	}
 
+	async function updateHandler() {}
+
 	return (
 		<View style={styles.container}>
 			<View style={[styles.header, { backgroundColor: color }]}>
@@ -52,6 +63,24 @@ const TransactionInfo = () => {
 				<Text style={styles.customerName}>{transactionData.name}</Text>
 				<Text style={styles.customerType}>Customer</Text>
 			</View>
+			<TextInput
+				placeholder="Amount"
+				style={styles.input}
+				value={inputAmount}
+				keyboardType="phone-pad"
+				onChangeText={setInputAmount}
+			/>
+			<TextInput
+				placeholder="Comment"
+				style={styles.input}
+				value={inputComment}
+				onChangeText={setInputComment}
+			/>
+			<TouchableOpacity
+				style={[styles.continueButton, { backgroundColor: color }]}
+				onPress={updateHandler}>
+				<Text style={styles.continueButtonText}>CONTINUE</Text>
+			</TouchableOpacity>
 		</View>
 	);
 };
@@ -67,6 +96,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-around",
 		paddingVertical: 10,
+		marginBottom: 15,
 	},
 	customerName: {
 		fontSize: 20,
@@ -77,6 +107,25 @@ const styles = StyleSheet.create({
 		color: "#f95a57",
 		paddingHorizontal: 5,
 		borderRadius: 5,
+	},
+	input: {
+		height: 50,
+		borderWidth: 1,
+		borderColor: "#ddd",
+		borderRadius: 8,
+		padding: 10,
+		fontSize: 16,
+		marginBottom: 20,
+	},
+	continueButton: {
+		padding: 15,
+		borderRadius: 8,
+		alignItems: "center",
+	},
+	continueButtonText: {
+		color: "#fff",
+		fontSize: 16,
+		fontWeight: "bold",
 	},
 });
 
