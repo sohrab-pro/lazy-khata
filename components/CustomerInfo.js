@@ -16,13 +16,24 @@ const CustomerInfo = ({ route }) => {
 	const navigation = useNavigation();
 	const { customer } = route.params;
 
-	const [transaction, setTransaction] = useState([]);
+	const [transactions, setTransactions] = useState([]);
+	const [currentBalance, setCurrentBalance] = useState(0);
+	const [amountLabel, setAmountLabel] = useState("");
 
 	useFocusEffect(
 		React.useCallback(() => {
+			// transaction
 			async function getData() {
 				const rows = await filterTransactionsRows(customer.id);
+				let totalCredit = 0;
+				let totalDebit = 0;
 				const formattedRows = rows.map((row) => {
+					if (row.transaction_type == "credit") {
+						totalCredit += row.amount;
+					} else {
+						totalDebit += row.amount;
+					}
+
 					const karachiTime = moment
 						.utc(row.created_at)
 						.tz("Asia/Karachi");
@@ -33,7 +44,7 @@ const CustomerInfo = ({ route }) => {
 					row.created_at = `${formattedDate} ・ ${formattedTime}`;
 					return row;
 				});
-				setTransaction(formattedRows);
+				setTransactions(formattedRows);
 			}
 			getData();
 
@@ -58,24 +69,29 @@ const CustomerInfo = ({ route }) => {
 	}
 
 	const renderTransaction = ({ item }) => (
-		<View style={styles.transactionRow}>
-			<Text style={styles.transactionDate}>{item.created_at}</Text>
-			{item.comment ? (
-				<Text style={styles.transactionTitle}>{item.comment}</Text>
-			) : (
-				""
-			)}
-			<Text
-				style={[
-					styles.transactionAmount,
-					item.transaction_type === "debit"
-						? styles.redText
-						: styles.greenText,
-				]}>
-				{item.amount}
-			</Text>
-			<Text style={styles.transactionBalance}>Bal. {item.balance}</Text>
-		</View>
+		<TouchableOpacity
+			onPress={() => navigation.navigate("TransactionInfo", { item })}>
+			<View style={styles.transactionRow}>
+				<Text style={styles.transactionDate}>{item.created_at}</Text>
+				{item.comment ? (
+					<Text style={styles.transactionTitle}>{item.comment}</Text>
+				) : (
+					""
+				)}
+				<Text
+					style={[
+						styles.transactionAmount,
+						item.transaction_type === "debit"
+							? styles.redText
+							: styles.greenText,
+					]}>
+					{item.amount}
+				</Text>
+				<Text style={styles.transactionBalance}>
+					Bal. {item.balance}
+				</Text>
+			</View>
+		</TouchableOpacity>
 	);
 
 	return (
@@ -88,7 +104,7 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Balance and Send Button */}
 			<View style={styles.balanceContainer}>
-				<Text style={styles.balanceText}>Rs 39,062</Text>
+				<Text style={styles.balanceText}>Rs {currentBalance}</Text>
 				<Text style={styles.subText}>You will give</Text>
 				<TouchableOpacity style={styles.sendButton}>
 					<Text style={styles.sendButtonText}>SEND</Text>
@@ -105,7 +121,7 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Transaction List */}
 			<FlatList
-				data={transaction} // Use dynamic transaction data
+				data={transactions} // Use dynamic transaction data
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderTransaction}
 			/>

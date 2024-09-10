@@ -6,6 +6,7 @@ import CustomerInfo from "./components/CustomerInfo";
 import CustomerList from "./components/CustomerList";
 import AddCustomer from "./components/AddCustomer";
 import AddTransaction from "./components/AddTransaction";
+import TransactionInfo from "./components/TransactionInfo";
 import { useEffect } from "react";
 import * as SQLite from "expo-sqlite";
 import { updateRow } from "./components/Database";
@@ -86,6 +87,11 @@ export default function App() {
 					<Stack.Screen
 						name="AddTransaction"
 						component={AddTransaction}
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name="TransactionInfo"
+						component={TransactionInfo}
 						options={{ headerShown: false }}
 					/>
 				</Stack.Navigator>
