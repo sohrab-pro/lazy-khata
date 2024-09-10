@@ -15,7 +15,6 @@ const TransactionInfo = () => {
 	const route = useRoute();
 
 	const transactionData = route.params.item;
-	console.log(transactionData);
 
 	async function deleteTransaction() {
 		await deleteRow(transactionData.id, "transactions");
