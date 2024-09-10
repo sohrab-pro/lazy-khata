@@ -19,10 +19,13 @@ const CustomerInfo = ({ route }) => {
 	const [transactions, setTransactions] = useState([]);
 	const [currentBalance, setCurrentBalance] = useState(0);
 	const [amountLabel, setAmountLabel] = useState("");
+	const [balanceStyle, setBalanceStyle] = useState({
+		fontSize: 28,
+		fontWeight: "bold",
+	});
 
 	useFocusEffect(
 		React.useCallback(() => {
-			// transaction
 			async function getData() {
 				const rows = await filterTransactionsRows(customer.id);
 				let totalCredit = 0;
@@ -45,6 +48,22 @@ const CustomerInfo = ({ route }) => {
 					return row;
 				});
 				setTransactions(formattedRows);
+				if (totalCredit > totalDebit) {
+					setAmountLabel("You Will Give");
+
+					setBalanceStyle((prevStyle) => ({
+						...prevStyle,
+						color: "green",
+					}));
+				} else {
+					setAmountLabel("You Will Get");
+					setBalanceStyle((prevStyle) => ({
+						...prevStyle,
+						color: "red",
+					}));
+				}
+
+				setCurrentBalance(totalCredit - totalDebit);
 			}
 			getData();
 
@@ -103,21 +122,44 @@ const CustomerInfo = ({ route }) => {
 			</View>
 
 			{/* Balance and Send Button */}
-			<View style={styles.balanceContainer}>
-				<Text style={styles.balanceText}>Rs {currentBalance}</Text>
-				<Text style={styles.subText}>You will give</Text>
-				<TouchableOpacity style={styles.sendButton}>
-					<Text style={styles.sendButtonText}>SEND</Text>
-				</TouchableOpacity>
-			</View>
+			{transactions.length > 0 ? (
+				<>
+					<View style={styles.balanceContainer}>
+						<Text style={balanceStyle}>Rs {currentBalance}</Text>
+						<Text
+							style={{
+								color:
+									amountLabel === "You Will Get"
+										? "red"
+										: "green",
+							}}>
+							{amountLabel}
+						</Text>
+						{amountLabel == "You Will Get" ? (
+							<TouchableOpacity style={styles.sendButton}>
+								<Text style={styles.sendButtonText}>
+									Message
+								</Text>
+							</TouchableOpacity>
+						) : (
+							<TouchableOpacity style={styles.receiveButton}>
+								<Text style={styles.receiveButtonText}>
+									Message
+								</Text>
+							</TouchableOpacity>
+						)}
+					</View>
 
-			{/* Action Buttons */}
-			<View style={styles.actionButtons}>
-				<Button title="Report" onPress={() => {}} />
-				<Button title="Set Date" onPress={() => {}} />
-				<Button title="Reminder" onPress={() => {}} />
-				<Button title="SMS" onPress={() => {}} />
-			</View>
+					<View style={styles.actionButtons}>
+						<Button title="Report" onPress={() => {}} />
+						<Button title="Set Date" onPress={() => {}} />
+						<Button title="Reminder" onPress={() => {}} />
+						<Button title="SMS" onPress={() => {}} />
+					</View>
+				</>
+			) : (
+				""
+			)}
 
 			{/* Transaction List */}
 			<FlatList
@@ -152,7 +194,7 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "space-between",
+		justifyContent: "space-around",
 		paddingVertical: 10,
 		backgroundColor: "#f95a57",
 	},
@@ -175,17 +217,30 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: "#39b54a",
 	},
-	subText: {
-		color: "#666",
+	sendBalanceText: {
+		fontSize: 28,
+		fontWeight: "bold",
+		color: "red",
 	},
 	sendButton: {
-		backgroundColor: "#39b54a",
+		backgroundColor: "red",
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 5,
 		marginTop: 10,
 	},
 	sendButtonText: {
+		color: "#fff",
+		fontWeight: "bold",
+	},
+	receiveButton: {
+		backgroundColor: "green",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		marginTop: 10,
+	},
+	receiveButtonText: {
 		color: "#fff",
 		fontWeight: "bold",
 	},
