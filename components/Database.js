@@ -7,7 +7,7 @@ export async function addCustomerRow(name, phone) {
 		name,
 		phone
 	);
-	return getAllRows();
+	return getAllCustomerRows();
 }
 
 export async function addTransactionsRow(
@@ -24,7 +24,7 @@ export async function addTransactionsRow(
 		customer_id,
 		transaction_type
 	);
-	return getAllRows();
+	return getAllCustomerRows();
 }
 
 export async function updateRow(id, name, phone) {
@@ -35,17 +35,31 @@ export async function updateRow(id, name, phone) {
 		intValue,
 		id
 	);
-	return getAllRows();
+	return getAllCustomerRows();
 }
 
 export async function deleteRow(id, table) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
 	await db.runAsync(`DELETE FROM ${table} WHERE id = ?`, id);
-	return getAllRows();
+	return getAllCustomerRows();
 }
 
-export async function getAllRows() {
+export async function getAllCustomerRows() {
 	const db = await SQLite.openDatabaseAsync("lazydb");
 	const allRows = await db.getAllAsync("SELECT * FROM customer");
+	return allRows;
+}
+
+export async function getAllTransactionsRows() {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const allRows = await db.getAllAsync("SELECT * FROM transactions");
+	return allRows;
+}
+
+export async function filterTransactionsRows(id) {
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const allRows = await db.getAllAsync(
+		`SELECT * FROM transactions WHERE customer_id = ${id} ORDER BY created_at DESC`
+	);
 	return allRows;
 }

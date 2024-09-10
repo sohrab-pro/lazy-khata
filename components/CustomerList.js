@@ -8,14 +8,14 @@ import {
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import BalanceCard from "./BalanceCard";
-import { getAllRows } from "./Database";
+import { getAllCustomerRows } from "./Database";
 
 const CustomerList = () => {
 	const [customers, setCustomers] = useState([]);
 	const navigation = useNavigation(); // Access navigation
 
 	const fetchCustomers = async () => {
-		const allRows = await getAllRows();
+		const allRows = await getAllCustomerRows();
 		let newRows = [];
 		for (const row of allRows) {
 			newRows.push({

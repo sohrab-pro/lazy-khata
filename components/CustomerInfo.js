@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -8,25 +8,51 @@ import {
 	TouchableOpacity,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
-import { deleteRow } from "./Database";
-
-const transactions = [
-	{
-		id: "1",
-		date: "Sun, 08 Sep 24 • 12:16 AM",
-		title: "Tindodag + home payment",
-		amount: "-2,000",
-		balance: "Rs39,062",
-		type: "gave",
-	},
-];
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { deleteRow, filterTransactionsRows } from "./Database";
 
 const CustomerInfo = ({ route }) => {
 	const navigation = useNavigation();
 	const { customer } = route.params;
 
 	const [transaction, setTransaction] = useState([]);
+
+	useFocusEffect(
+		React.useCallback(() => {
+			async function getData() {
+				const rows = await filterTransactionsRows(customer.id);
+				const formattedRows = rows.map((row) => {
+					// Parse the created_at timestamp
+					const date = new Date(row.created_at);
+
+					// Format the date and time for Asia/Karachi timezone
+					const options = {
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+						hour12: true, // 12-hour format with AM/PM
+						timeZone: "Asia/Karachi",
+					};
+					const formattedDate = new Intl.DateTimeFormat(
+						"en-US",
+						options
+					).format(date);
+
+					// Format it into desired output "2024-09-10 - time /AM/PM"
+					const [datePart, timePart] = formattedDate.split(", ");
+					row.created_at = `${datePart} - ${timePart}`;
+
+					return row;
+				});
+				setTransaction(formattedRows);
+			}
+			getData();
+
+			return () => {};
+		}, [customer.id])
+	);
 
 	async function addTransaction(type) {
 		let customerInfo = {
@@ -43,13 +69,17 @@ const CustomerInfo = ({ route }) => {
 		await deleteRow(customer.id, "customer");
 		navigation.goBack();
 	}
+
 	const renderTransaction = ({ item }) => (
 		<View style={styles.transactionRow}>
-			<Text style={styles.transactionTitle}>{item.title}</Text>
+			<Text style={styles.transactionDate}>{item.created_at}</Text>
+			<Text style={styles.transactionTitle}>{item.comment}</Text>
 			<Text
 				style={[
 					styles.transactionAmount,
-					item.type === "gave" ? styles.redText : styles.greenText,
+					item.transaction_type === "debit"
+						? styles.redText
+						: styles.greenText,
 				]}>
 				{item.amount}
 			</Text>
@@ -61,7 +91,7 @@ const CustomerInfo = ({ route }) => {
 		<View style={styles.container}>
 			{/* Header Section */}
 			<View style={styles.header}>
-				<Text style={styles.customerName}>Khalid</Text>
+				<Text style={styles.customerName}>{customer.name}</Text>
 				<Text style={styles.customerType}>Customer</Text>
 			</View>
 
@@ -84,8 +114,8 @@ const CustomerInfo = ({ route }) => {
 
 			{/* Transaction List */}
 			<FlatList
-				data={transactions}
-				keyExtractor={(item) => item.id}
+				data={transaction} // Use dynamic transaction data
+				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderTransaction}
 			/>
 
@@ -164,6 +194,9 @@ const styles = StyleSheet.create({
 	},
 	transactionTitle: {
 		fontSize: 16,
+	},
+	transactionDate: {
+		fontSize: 12,
 	},
 	transactionAmount: {
 		fontSize: 18,
