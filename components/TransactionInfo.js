@@ -6,7 +6,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 } from "react-native";
-import { deleteRow, getCustomer } from "./Database";
+import { deleteRow, getCustomer, updateTransaction } from "./Database";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -52,7 +52,10 @@ const TransactionInfo = () => {
 		navigation.goBack();
 	}
 
-	async function updateHandler() {}
+	async function updateHandler() {
+		await updateTransaction(transactionData.id, inputAmount, inputComment);
+		navigation.goBack();
+	}
 
 	return (
 		<View style={styles.container}>

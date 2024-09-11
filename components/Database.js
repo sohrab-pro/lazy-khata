@@ -60,6 +60,18 @@ export async function updateRow(id, name, phone) {
 	return getAllCustomerRows();
 }
 
+export async function updateTransaction(id, amount, comment) {
+	amount = parseFloat(amount);
+	const db = await SQLite.openDatabaseAsync("lazydb");
+	const result = await db.runAsync(
+		"UPDATE transactions SET amount = ?, comment = ? WHERE id = ?",
+		amount,
+		comment,
+		id
+	);
+	return result;
+}
+
 export async function deleteRow(id, table) {
 	const db = await SQLite.openDatabaseAsync("lazydb");
 	await db.runAsync(`DELETE FROM ${table} WHERE id = ?`, id);

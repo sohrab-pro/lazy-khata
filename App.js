@@ -9,7 +9,6 @@ import AddTransaction from "./components/AddTransaction";
 import TransactionInfo from "./components/TransactionInfo";
 import { useEffect } from "react";
 import * as SQLite from "expo-sqlite";
-import { updateRow } from "./components/Database";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +18,7 @@ export default function App() {
 			const db = await SQLite.openDatabaseAsync("lazydb");
 			await db.execAsync(`
 				PRAGMA journal_mode = WAL;
-				
+
 				CREATE TABLE IF NOT EXISTS customer (
 					id INTEGER PRIMARY KEY NOT NULL, 
 					name TEXT NOT NULL, 
@@ -53,10 +52,6 @@ export default function App() {
 					UPDATE transactions SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 				END;
 			`);
-
-			const transactions = await db.getAllAsync(
-				"SELECT * FROM transactions"
-			);
 		}
 		setup();
 	}, []);
