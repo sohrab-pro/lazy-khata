@@ -19,10 +19,13 @@ export default function App() {
 			await db.execAsync(`
 				PRAGMA journal_mode = WAL;
 
+				/*DROP TABLE customer;*/
+				/*DROP TABLE transactions;*/
+
 				CREATE TABLE IF NOT EXISTS customer (
 					id INTEGER PRIMARY KEY NOT NULL, 
 					name TEXT NOT NULL, 
-					phone INTEGER,
+					phone TEXT,
 					created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
 					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 				);
@@ -51,7 +54,54 @@ export default function App() {
 				BEGIN
 					UPDATE transactions SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 				END;
+
+				CREATE TABLE IF NOT EXISTS added_customers (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					customer_id INTEGER NOT NULL, 
+					name TEXT NOT NULL, 
+					phone TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+
+				CREATE TABLE IF NOT EXISTS deleted_customers (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					customer_id INTEGER NOT NULL, 
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+
+				CREATE TABLE IF NOT EXISTS updated_customers (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					customer_id INTEGER NOT NULL, 
+					name TEXT NOT NULL, 
+					phone TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+
+				CREATE TABLE IF NOT EXISTS added_transactions (
+					id INTEGER PRIMARY KEY NOT NULL,
+					transaction_id INTEGER NOT NULL,
+					amount REAL NOT NULL,
+					comment TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+
+				CREATE TABLE IF NOT EXISTS deleted_transactions (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					transaction_id INTEGER NOT NULL, 
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+
+				CREATE TABLE IF NOT EXISTS updated_transactions (
+					id INTEGER PRIMARY KEY NOT NULL, 
+					transaction_id INTEGER NOT NULL,
+					amount REAL NOT NULL,
+					comment TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
 			`);
+
+			// const result = db.getAllSync("SELECT * FROM updated_transactions");
+			// console.log(result);
 		}
 		setup();
 	}, []);
