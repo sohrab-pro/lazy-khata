@@ -36,7 +36,7 @@ const AddTransaction = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Add Customer</Text>
+			<Text style={styles.title}>Add Transaction</Text>
 
 			<TextInput
 				placeholder="Amount"

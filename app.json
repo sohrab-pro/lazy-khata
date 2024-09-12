@@ -16,13 +16,19 @@
 		},
 		"android": {
 			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
+				"foregroundImage": "./assets/icon.png",
 				"backgroundColor": "#ffffff"
-			}
+			},
+			"package": "com.sohrabprofile.lazykhata"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
 		},
-		"plugins": ["expo-asset"]
+		"plugins": ["expo-asset"],
+		"extra": {
+			"eas": {
+				"projectId": "e35d406e-1b68-4436-b2bc-dc585ab6e9a9"
+			}
+		}
 	}
 }
