@@ -7,12 +7,17 @@ import CustomerList from "./components/CustomerList";
 import AddCustomer from "./components/AddCustomer";
 import AddTransaction from "./components/AddTransaction";
 import TransactionInfo from "./components/TransactionInfo";
-import { useEffect } from "react";
+import Login from "./components/Login";
+import { useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
+import { signUp, login, logout } from "./auth";
+import { getUser, removeUser } from "./storage";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 	useEffect(() => {
 		async function setup() {
 			const db = await SQLite.openDatabaseAsync("lazydb");
@@ -105,6 +110,22 @@ export default function App() {
 		}
 		setup();
 	}, []);
+
+	useEffect(() => {
+		const checkLogin = async () => {
+			const user = await getUser();
+			if (user) {
+				setIsLoggedIn(true);
+			} else {
+				setIsLoggedIn(false);
+			}
+		};
+		checkLogin();
+	}, []);
+
+	if (!isLoggedIn) {
+		return <Login setLogin={setIsLoggedIn} />;
+	}
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
