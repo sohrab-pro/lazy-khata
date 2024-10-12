@@ -15,17 +15,10 @@ const signUp = async (email, password) => {
 			password
 		);
 		const user = userCredential.user;
-		// console.log(user);
 		await storeUser(user);
-		return user;
+		return ["success", true];
 	} catch (error) {
-		console.error(
-			error.code,
-			"error!!",
-			error.code == "auth/email-already-in-use",
-			"here##"
-		);
-		return false;
+		return [error, false];
 	}
 };
 
@@ -36,12 +29,14 @@ const login = async (email, password) => {
 			email,
 			password
 		);
-		console.log(userCredential);
 		const user = userCredential.user;
 		await getUser(user.uid);
+		await storeUser(user);
+		return ["success", true];
 	} catch (error) {
 		console.log("this error");
 		console.error(error);
+		return [error, false];
 	}
 };
 

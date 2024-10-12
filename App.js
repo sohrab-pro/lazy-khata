@@ -1,19 +1,74 @@
-import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CustomerInfo from "./components/CustomerInfo";
 import CustomerList from "./components/CustomerList";
 import AddCustomer from "./components/AddCustomer";
 import AddTransaction from "./components/AddTransaction";
 import TransactionInfo from "./components/TransactionInfo";
+import BottomTabs from "./components/ButtonTabs";
+import Setting from "./components/Setting";
 import Login from "./components/Login";
 import { useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
-import { signUp, login, logout } from "./auth";
-import { getUser, removeUser } from "./storage";
+import { getUser } from "./storage";
 
 const Stack = createNativeStackNavigator();
+
+function MainContent({ setIsLoggedIn }) {
+	const [activeTab, setActiveTab] = useState("Home");
+	const navigation = useNavigation();
+
+	const handlePress = (tab) => {
+		setActiveTab(tab);
+		if (tab === "Home") {
+			navigation.navigate("CustomerList");
+		} else if (tab === "Settings") {
+			navigation.navigate("Setting");
+		} else if (tab === "Profile") {
+		}
+	};
+
+	return (
+		<>
+			<Stack.Navigator initialRouteName="CustomerList">
+				<Stack.Screen
+					name="CustomerList"
+					component={CustomerList}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name="AddCustomer"
+					component={AddCustomer}
+					options={{ headerShown: false, title: "Adding customer" }}
+				/>
+				<Stack.Screen
+					name="CustomerInfo"
+					component={CustomerInfo}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name="AddTransaction"
+					component={AddTransaction}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name="TransactionInfo"
+					component={TransactionInfo}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen name="Setting" options={{ headerShown: false }}>
+					{() => <Setting setIsLoggedIn={setIsLoggedIn} />}
+				</Stack.Screen>
+			</Stack.Navigator>
+			<BottomTabs
+				tabs={["Home", "Settings"]}
+				activeTab={activeTab}
+				onPress={handlePress}
+			/>
+		</>
+	);
+}
 
 export default function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -129,38 +184,8 @@ export default function App() {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-			<StatusBar style="auto" />
 			<NavigationContainer>
-				<Stack.Navigator initialRouteName="CustomerList">
-					<Stack.Screen
-						name="Customers"
-						component={CustomerList}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="AddCustomer"
-						component={AddCustomer}
-						options={{
-							headerShown: false,
-							title: "Adding customer",
-						}}
-					/>
-					<Stack.Screen
-						name="CustomerInfo"
-						component={CustomerInfo}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="AddTransaction"
-						component={AddTransaction}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="TransactionInfo"
-						component={TransactionInfo}
-						options={{ headerShown: false }}
-					/>
-				</Stack.Navigator>
+				<MainContent setIsLoggedIn={setIsLoggedIn} />
 			</NavigationContainer>
 		</SafeAreaView>
 	);

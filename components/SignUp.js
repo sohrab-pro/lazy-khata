@@ -1,47 +1,13 @@
-import {
-	View,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	StyleSheet,
-} from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { signUp, login } from "../auth";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, StyleSheet } from "react-native";
+import { signUp } from "../auth";
 
-function Login({ setLogin }) {
-	const [email, setEmail] = useState("sohrabprofile@gmail.com");
-	const [password, setPassword] = useState("khankhan");
-	const [error, setError] = useState("");
-	const handleLogin = async () => {
-		const [response, code] = await login(email, password);
-		if (code) {
-			setLogin(true);
-		} else {
-			if (response.code === "User not found") {
-				setError("User not found");
-			} else if (response.code === "auth/invalid-credential") {
-				setError("Incorrect email or password");
-			} else {
-				setError("Something went wrong");
-			}
-		}
-	};
-
+const SignUp = () => {
 	const handleSignUp = async () => {
-		const [response, code] = await signUp(email, password);
-		if (code) {
+		const response = await signUp(email, password);
+		if (response) {
 			setLogin(true);
-		} else {
-			if (response.code === "auth/email-already-in-use") {
-				setError("Email already in use");
-			} else {
-				setError("Something went wrong");
-			}
 		}
 	};
-
 	return (
 		<SafeAreaView style={styles.container}>
 			<LinearGradient
@@ -49,7 +15,6 @@ function Login({ setLogin }) {
 				style={styles.gradient}>
 				<View style={styles.content}>
 					<Text style={styles.title}>Welcome Back</Text>
-					<Text style={styles.error}>{error}</Text>
 					<View style={styles.inputContainer}>
 						<Text style={styles.label}>Email:</Text>
 						<TextInput
@@ -76,16 +41,16 @@ function Login({ setLogin }) {
 						onPress={handleLogin}>
 						<Text style={styles.buttonText}>Login</Text>
 					</TouchableOpacity>
-					<TouchableOpacity
-						style={[styles.button, styles.signUpButton]}
-						onPress={handleSignUp}>
-						<Text style={styles.buttonText}>Sign Up</Text>
+					<TouchableOpacity style={styles.registerLink}>
+						<Text style={styles.registerText}>
+							No account? Register here
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</LinearGradient>
 		</SafeAreaView>
 	);
-}
+};
 
 const styles = StyleSheet.create({
 	container: {
@@ -104,7 +69,7 @@ const styles = StyleSheet.create({
 		fontSize: 28,
 		fontWeight: "bold",
 		color: "#ffffff",
-		marginBottom: 10,
+		marginBottom: 30,
 	},
 	inputContainer: {
 		width: "100%",
@@ -142,11 +107,6 @@ const styles = StyleSheet.create({
 		color: "#ffffff",
 		textDecorationLine: "underline",
 	},
-	error: {
-		color: "red",
-		marginBottom: 10,
-		fontWeight: "bold",
-	},
 });
 
-export default Login;
+export default SignUp;

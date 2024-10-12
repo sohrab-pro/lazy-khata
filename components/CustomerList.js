@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 	},
 	floatingButton: {
 		position: "absolute",
-		bottom: 20,
+		bottom: 70,
 		right: 20,
 		backgroundColor: "#FF0000",
 		padding: 10,
